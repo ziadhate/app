@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <ctime>
+#include<map>
 using namespace std;
 
 // ========================
@@ -77,58 +78,112 @@ private:
     string status;
     Message* replyTo;
 
+    string getcurrentTime(){
+        time_t current = time(0);
+        string cur_Time = ctime(&current);
+
+    return cur_Time;
+    }
+
 public:
     Message() {
-        // TODO: Implement default constructor
+       sender = "";
+       content = "";
+       timestamp = getcurrentTime();
+       status = "Sent";
+       replyTo = nullptr;
     }
 
     Message(string sndr, string cntnt) {
-        // TODO: Implement parameterized constructor
+       sender = sndr;
+       content = cntnt;
     }
 
     string getContent() const {
-        // TODO: Implement getter
-        return "";
+
+        return content;
     }
 
     string getSender() const {
-        // TODO: Implement getter
-        return "";
+        return sender;
     }
 
     string getTimestamp() const {
-        // TODO: Implement getter
-        return "";
+
+        return timestamp;
     }
 
     string getStatus() const {
-        // TODO: Implement getter
-        return "";
+
+        return status;
     }
 
     Message* getReplyTo() const {
-        // TODO: Implement getter
-        return nullptr;
+
+        return replyTo;
     }
 
     void setStatus(string newStatus) {
-        // TODO: Implement setter
+        if (status == "Sent" && (newStatus == "Delivered" || newStatus == "Read"))
+        {
+            status = newStatus;
+        }
+        else if (status == "Delivered" && newStatus == "Read")
+        {
+            status = newStatus;
+        } else {
+
+        }
+
     }
 
     void setReplyTo(Message* msg) {
-        // TODO: Implement setter
+        if ( msg != this &&msg != nullptr){
+                // we will check about this condition.
+            replyTo = msg;
+        }
     }
 
     void updateTimestamp() {
-        // TODO: Implement timestamp update
+       timestamp = getcurrentTime();
     }
 
     void display() const {
-        // TODO: Implement message display
+       cout<< "Sender : "<< sender << endl;
+       cout << " Time : "<< timestamp << endl;
+       cout << " Status :" << status << endl;
+       if ( replyTo != nullptr){
+        cout << " Replying to :"<< replyTo ->getSender() << endl;
+        cout << replyTo ->getContent();
+        cout << endl;
+       }
+
+       cout << " Content : "<< content << endl;
+
     }
 
     void addEmoji(string emojiCode) {
-        // TODO: Implement emoji support
+
+         static map<string, string> EMOJIS = {
+         {":joy:" , u8"\U0001F602"},
+          {":open_mouth:" , u8"\U0001F62E"},
+          {":cry:" , u8"\U0001F622"},
+          {":thumbsup:" , u8"\U0001F44D"},
+           {":facepunch:" , u8"\U0001F44A"},
+            {":green_heart:" , u8"\U0001F49A"},
+            {":wave:" , u8"\U0001F44B"},
+            {":thumbsdown:" , u8"\U0001F44E"},
+            {":worried:" , u8"\U0001F61F"},
+            {":world_map:" , u8"\U0001F5FA"},
+
+         };
+         auto emoji = EMOJIS.find(emojiCode);
+        if (emoji != EMOJIS.end()){
+            content = content + " " + emoji->second ;
+        }
+        else {
+            cout<< "Unknown emoji code "<< endl;
+        }
     }
 };
 
