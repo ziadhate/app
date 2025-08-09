@@ -197,20 +197,25 @@ protected:
     string chatName;
 
 public:
-    Chat() {
-        // TODO: Implement default constructor
-    }
+ 
+    Chat() : chatName("Untitled"), participants(), messages() {}
 
-    Chat(vector<string> users, string name) {
-        // TODO: Implement parameterized constructor
+    Chat(vector<string> users, string name)
+        : participants(users), chatName(name), messages() {
     }
 
     void addMessage(const Message& msg) {
-        // TODO: Implement message addition
+        messages.push_back(msg);
     }
 
     bool deleteMessage(int index, const string& username) {
-        // TODO: Implement message deletion
+        if (index >= 0 && index < messages.size()) {
+            if (messages[index].getSender() == username) {
+                messages.erase(messages.begin() + index);
+                return true;
+
+            }
+       }
         return false;
     }
 
