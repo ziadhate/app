@@ -3,6 +3,7 @@
 #include <string>
 #include <ctime>
 #include <map>
+#include <fstream>
 using namespace std;
 
 // ========================
@@ -91,10 +92,11 @@ private:
     string status;
     Message *replyTo;
 
-    string getCurrentTime()
+    string getcurrentTime()
     {
         time_t current = time(0);
         string cur_Time = ctime(&current);
+
         return cur_Time;
     }
 
@@ -103,7 +105,7 @@ public:
     {
         sender = "";
         content = "";
-        timestamp = getCurrentTime();
+        timestamp = getcurrentTime();
         status = "Sent";
         replyTo = nullptr;
     }
@@ -112,39 +114,34 @@ public:
     {
         sender = sndr;
         content = cntnt;
-        timestamp = getCurrentTime();
-        status = "Sent";
-        replyTo = nullptr;
     }
 
     string getContent() const
     {
-        // TODO: Implement getter
 
         return content;
     }
 
     string getSender() const
     {
-        // TODO: Implement getter
         return sender;
     }
 
     string getTimestamp() const
     {
-        // TODO: Implement getter
+
         return timestamp;
     }
 
     string getStatus() const
     {
-        // TODO: Implement getter
+
         return status;
     }
 
     Message *getReplyTo() const
     {
-        // TODO: Implement getter
+
         return replyTo;
     }
 
@@ -170,57 +167,61 @@ public:
             // we will check about this condition.
             replyTo = msg;
         }
-        else
-        {
-        }
     }
 
     void updateTimestamp()
     {
-        timestamp = getCurrentTime();
+        timestamp = getcurrentTime();
     }
 
     void display() const
     {
-        cout << "From: " << sender << endl;
-        cout << "Time: " << timestamp << endl;
-        cout << "Status: " << status << endl;
+        cout << "Sender : " << sender << endl;
+        cout << " Time : " << timestamp << endl;
+        cout << " Status :" << status << endl;
         if (replyTo != nullptr)
         {
-            cout << "Replying to " << replyTo->getSender() << endl;
-            cout << replyTo->getContent() << "\n";
+            cout << " Replying to :" << replyTo->getSender() << endl;
+            cout << replyTo->getContent();
             cout << endl;
         }
-        else
+
+        cout << " Content : " << content << endl;
+    }
+    string toString() const
+    {
+        string s = "[" + timestamp + "] " + sender + " (" + status + "): " + content;
+        if (replyTo != nullptr)
         {
+            s += " (reply to " + replyTo->getSender() + ": \"" + replyTo->getContent() + "\")";
         }
-        cout << "\n"
-             << content << "\n"
-             << endl;
+        return s;
     }
 
     void addEmoji(string emojiCode)
     {
-        static const map<string, string> EMOJIS = {
-            {":joy:", u8"😂"},
-            {":open_mouth:", u8"😮"},
-            {":cry:", u8"😢"},
-            {":thumbsup:", u8"👍"},
-            {":facepunch:", u8"👊"},
-            {":green_heart:", u8"💚"},
-            {":wave:", u8"👋"},
-            {":thumbsdown:", u8"👎"},
-            {":worried:", u8"😟"},
-            {":world_map:", u8"🗺"}};
 
+        static map<string, string> EMOJIS = {
+            {":joy:", u8"\U0001F602"},
+            {":open_mouth:", u8"\U0001F62E"},
+            {":cry:", u8"\U0001F622"},
+            {":thumbsup:", u8"\U0001F44D"},
+            {":facepunch:", u8"\U0001F44A"},
+            {":green_heart:", u8"\U0001F49A"},
+            {":wave:", u8"\U0001F44B"},
+            {":thumbsdown:", u8"\U0001F44E"},
+            {":worried:", u8"\U0001F61F"},
+            {":world_map:", u8"\U0001F5FA"},
+
+        };
         auto emoji = EMOJIS.find(emojiCode);
         if (emoji != EMOJIS.end())
         {
-            content += " " + emoji->second;
+            content = content + " " + emoji->second;
         }
         else
         {
-            cout << "Unknown emoji code: " << emojiCode << endl;
+            cout << "Unknown emoji code " << endl;
         }
     }
 };
@@ -236,42 +237,75 @@ protected:
     string chatName;
 
 public:
-    Chat()
-    {
-        // TODO: Implement default constructor
-    }
+    Chat() : chatName("Untitled"), participants(), messages() {}
 
     Chat(vector<string> users, string name)
+        : participants(users), chatName(name), messages()
     {
-        // TODO: Implement parameterized constructor
     }
 
     void addMessage(const Message &msg)
     {
-        // TODO: Implement message addition
+        messages.push_back(msg);
     }
 
     bool deleteMessage(int index, const string &username)
     {
-        // TODO: Implement message deletion
+        if (index >= 0 && index < messages.size())
+        {
+            if (messages[index].getSender() == username)
+            {
+                messages.erase(messages.begin() + index);
+                return true;
+            }
+        }
         return false;
     }
 
     virtual void displayChat() const
     {
-        // TODO: Implement chat display
+        cout << "Chat: " << chatName << endl;
+        for (const auto &msg : messages)
+        {
+            msg.display();
+        }
     }
 
     vector<Message> searchMessages(string keyword) const
     {
-        // TODO: Implement message search
+
+        vector<Message> results;
+        for (const auto &msg : messages)
+        {
+            if (msg.getContent().find(keyword) != string::npos)
+            {
+                results.push_back(msg);
+                return results;
+            }
+        }
+
         return {};
     }
 
     void exportToFile(const string &filename) const
     {
-        // TODO: Implement export to file
-    }
+
+        ofstream file(filename);
+        if (file.is_open())
+        {
+            file << "Chat: " << chatName << "\n";
+            for (const auto &msg : messages)
+            {
+                file << msg.toString() << "\n";
+            }
+            file.close();
+            cout << "Chat exported to " << filename << endl;
+        }
+        else
+        {
+            cerr << "Failed to open file for writing: " << filename << endl;
+        }
+    };
 };
 
 // ========================
