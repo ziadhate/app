@@ -18,65 +18,103 @@ private:
     string status;
     string lastSeen;
 
+    string getCurrentTime() const
+    {
+        time_t now = time(0);
+        string t = ctime(&now);
+        t.pop_back();
+        return t;
+    }
+
 public:
     User()
     {
         // TODO: Implement default constructor
+        status = "Offline";
+        lastSeen = "Never";
     }
 
     User(string uname, string pwd, string phone)
     {
         // TODO: Implement parameterized constructor
+        username = uname;
+        password = pwd;
+        phoneNumber = phone;
+        status = "Offline";
+        lastSeen = "Never";
     }
 
     string getUsername() const
     {
         // TODO: Implement getter
-        return "";
+        return username;
     }
 
     string getPhoneNumber() const
     {
         // TODO: Implement getter
-        return "";
+        return phoneNumber;
     }
 
     string getStatus() const
     {
         // TODO: Implement getter
-        return "";
+        return status;
     }
 
     string getLastSeen() const
     {
         // TODO: Implement getter
-        return "";
+        return lastSeen;
     }
 
     void setStatus(string newStatus)
     {
         // TODO: Implement setter
+        if (newStatus != "Online" && newStatus != "Offline" &&
+            newStatus != "Busy" && newStatus != "Away")
+        {
+            throw invalid_argument("Invalid status value");
+        }
+        status = newStatus;
     }
 
     void setPhoneNumber(string phone)
     {
         // TODO: Implement setter
+        if (phone.empty())
+        {
+            throw invalid_argument("No phone number Entered");
+        }
+        phoneNumber = phone;
     }
 
     void updateLastSeen()
     {
         // TODO: Implement last seen update
+        lastSeen = getCurrentTime();
     }
 
     bool checkPassword(string pwd) const
     {
         // TODO: Implement password check
-        return false;
+        return password == pwd;
     }
 
     void changePassword(string newPwd)
     {
         // TODO: Implement password change
+
+        password = newPwd;
+    }
+
+    void displayProfile() const
+    {
+        cout << "\nUser Profile:\n"
+             << "Username: " << username << "\n"
+             << "Phone: " << phoneNumber << "\n"
+             << "Status: " << status << "\n"
+             << "Last Seen: " << lastSeen << "\n";
     }
 };
 
@@ -503,19 +541,29 @@ private:
     int findUserIndex(string username) const
     {
         // TODO: Implement user search
+        for (int i = 0; i < users.size(); i++)
+            if (users[i].getUsername() == username)
+                return i;
         return -1;
     }
 
     bool isLoggedIn() const
     {
         // TODO: Implement login check
-        return false;
+        return currentUserIndex != -1;
     }
 
     string getCurrentUsername() const
     {
         // TODO: Implement get current user
-        return "";
+        if (isLoggedIn())
+        {
+            return users[currentUserIndex].getUsername();
+        }
+        else
+        {
+            return "";
+        }
     }
 
 public:
