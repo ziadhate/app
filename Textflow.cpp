@@ -3,6 +3,7 @@
 #include <string>
 #include <ctime>
 #include <map>
+#include <fstream>
 using namespace std;
 
 // ========================
@@ -187,6 +188,15 @@ public:
 
         cout << " Content : " << content << endl;
     }
+    string toString() const
+    {
+        string s = "[" + timestamp + "] " + sender + " (" + status + "): " + content;
+        if (replyTo != nullptr)
+        {
+            s += " (reply to " + replyTo->getSender() + ": \"" + replyTo->getContent() + "\")";
+        }
+        return s;
+    }
 
     void addEmoji(string emojiCode)
     {
@@ -254,19 +264,48 @@ public:
 
     virtual void displayChat() const
     {
-        // TODO: Implement chat display
+        cout << "Chat: " << chatName << endl;
+        for (const auto &msg : messages)
+        {
+            msg.display();
+        }
     }
 
     vector<Message> searchMessages(string keyword) const
     {
-        // TODO: Implement message search
+
+        vector<Message> results;
+        for (const auto &msg : messages)
+        {
+            if (msg.getContent().find(keyword) != string::npos)
+            {
+                results.push_back(msg);
+                return results;
+            }
+        }
+
         return {};
     }
 
     void exportToFile(const string &filename) const
     {
-        // TODO: Implement export to file
-    }
+
+        ofstream file(filename);
+        if (file.is_open())
+        {
+            file << "Chat: " << chatName << "\n";
+            for (const auto &msg : messages)
+            {
+                file << msg.toString() << "\n";
+            }
+            file.close();
+            cout << "Chat exported to " << filename << endl;
+        }
+        else
+        {
+            cerr << "Failed to open file for writing: " << filename << endl;
+        }
+    };
 };
 
 // ========================
