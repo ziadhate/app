@@ -464,6 +464,30 @@ private:
     vector<Chat *> chats;
     int currentUserIndex;
 
+<<<<<<< HEAD
+    int findUserIndex(string username) const {
+        for (int i = 0;i < users.size;i++) {
+            if (users[i].getUsername() == username) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    bool isLoggedIn() const {
+        
+        return currentUserIndex != -1;;
+    }
+
+    string getCurrentUsername() const {
+        if (isloggedIn()) {
+            return users[currentUserIndex].getUsername();
+        }
+        else {
+
+            return "";
+        }
+=======
     int findUserIndex(string username) const
     {
         // TODO: Implement user search
@@ -480,11 +504,71 @@ private:
     {
         // TODO: Implement get current user
         return "";
+>>>>>>> 263717e6b9e277968812c8f9530071dcbc41e2ce
     }
 
 public:
     WhatsApp() : currentUserIndex(-1) {}
 
+<<<<<<< HEAD
+    void signUp() {
+        string username, password, phone;
+
+        cout << "Enter username: ";
+        cin >> username;
+
+    
+        if (findUserIndex(username) != -1) {
+            cout << "Username already taken. Try a different one.\n";
+            return;
+        }
+
+        cout << "Enter password: ";
+        cin >> password;
+
+        cout << "Enter phone number: ";
+        cin >> phone;
+
+        users.push_back(User(username, password, phone));
+        cout << "User registered successfully.\n";
+    }
+
+    void login() {
+        string username, password;
+        cout << "Enter username: ";
+        cin >> username;
+        cout << "Enter password: ";
+        cin >> password;
+
+        int index = findUserIndex(username);
+        if (index != -1 && users[index].checkPassword(password)) {
+            currentUserIndex = index;
+            users[currentUserIndex].setstatus("Online");
+            cout << "Login successful. Welcome, " << username << "!\n";
+        }
+        else {
+            cout << "Invalid username or password.\n";
+        }
+    }
+
+    void startPrivateChat() {
+ 
+        string otherUser;
+        cout << "Enter the username to chat with: ";
+        cin >> otherUser;
+
+        int otherIndex = findUserIndex(otherUser);
+        if (otherIndex == -1) {
+            cout << "User not found.\n";
+            return;
+        }
+
+        string currentUser = getCurrentUsername();
+        Chat* chat = new PrivateChat(currentUser, otherUser);
+        chats.push_back(chat);
+        cout << "Private chat started between " << currentUser << " and " << otherUser << ".\n";
+
+=======
     void signUp()
     {
         // TODO: Implement user registration
@@ -499,12 +583,34 @@ public:
     {
         // TODO: Implement private chat creation
     }
+>>>>>>> 263717e6b9e277968812c8f9530071dcbc41e2ce
 
     void createGroup()
     {
         // TODO: Implement group creation
     }
 
+<<<<<<< HEAD
+    void viewChats() const {
+        if (chats.empty()) {
+            cout << "No chats to display.\n";
+            return;
+        }
+
+        for (size_t i = 0; i < chats.size(); ++i) {
+            cout << "\n--- Chat #" << (i + 1) << " ---\n";
+            chats[i]->displayChat();
+        }
+    }
+    }
+
+    void logout() {
+        users[currentUserIndex].updateLastSeen();
+            users[currentUserIndex].setStatus("Offline");
+            currentUserIndex = -1;
+            cout << "logging out is successful \n";
+
+=======
     void viewChats() const
     {
         // TODO: Implement chat viewing
@@ -513,6 +619,7 @@ public:
     void logout()
     {
         // TODO: Implement logout
+>>>>>>> 263717e6b9e277968812c8f9530071dcbc41e2ce
     }
 
     void run()
