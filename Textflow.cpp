@@ -337,45 +337,113 @@ private:
     int currentUserIndex;
 
     int findUserIndex(string username) const {
-        // TODO: Implement user search
+        for (int i = 0;i < users.size;i++) {
+            if (users[i].getUsername() == username) {
+                return i;
+            }
+        }
         return -1;
     }
 
     bool isLoggedIn() const {
-        // TODO: Implement login check
-        return false;
+        
+        return currentUserIndex != -1;;
     }
 
     string getCurrentUsername() const {
-        // TODO: Implement get current user
-        return "";
+        if (isloggedIn()) {
+            return users[currentUserIndex].getUsername();
+        }
+        else {
+
+            return "";
+        }
     }
 
 public:
     WhatsApp() : currentUserIndex(-1) {}
 
     void signUp() {
-        // TODO: Implement user registration
+        string username, password, phone;
+
+        cout << "Enter username: ";
+        cin >> username;
+
+    
+        if (findUserIndex(username) != -1) {
+            cout << "Username already taken. Try a different one.\n";
+            return;
+        }
+
+        cout << "Enter password: ";
+        cin >> password;
+
+        cout << "Enter phone number: ";
+        cin >> phone;
+
+        users.push_back(User(username, password, phone));
+        cout << "User registered successfully.\n";
     }
 
     void login() {
-        // TODO: Implement user login
+        string username, password;
+        cout << "Enter username: ";
+        cin >> username;
+        cout << "Enter password: ";
+        cin >> password;
+
+        int index = findUserIndex(username);
+        if (index != -1 && users[index].checkPassword(password)) {
+            currentUserIndex = index;
+            users[currentUserIndex].setstatus("Online");
+            cout << "Login successful. Welcome, " << username << "!\n";
+        }
+        else {
+            cout << "Invalid username or password.\n";
+        }
     }
 
     void startPrivateChat() {
-        // TODO: Implement private chat creation
-    }
+ 
+        string otherUser;
+        cout << "Enter the username to chat with: ";
+        cin >> otherUser;
+
+        int otherIndex = findUserIndex(otherUser);
+        if (otherIndex == -1) {
+            cout << "User not found.\n";
+            return;
+        }
+
+        string currentUser = getCurrentUsername();
+        Chat* chat = new PrivateChat(currentUser, otherUser);
+        chats.push_back(chat);
+        cout << "Private chat started between " << currentUser << " and " << otherUser << ".\n";
+
 
     void createGroup() {
         // TODO: Implement group creation
     }
 
     void viewChats() const {
-        // TODO: Implement chat viewing
+        if (chats.empty()) {
+            cout << "No chats to display.\n";
+            return;
+        }
+
+        for (size_t i = 0; i < chats.size(); ++i) {
+            cout << "\n--- Chat #" << (i + 1) << " ---\n";
+            chats[i]->displayChat();
+        }
+    }
     }
 
     void logout() {
-        // TODO: Implement logout
+        users[currentUserIndex].updateLastSeen();
+            users[currentUserIndex].setStatus("Offline");
+            currentUserIndex = -1;
+            cout << "logging out is successful \n";
+
     }
 
     void run() {
