@@ -75,6 +75,7 @@ public:
             throw invalid_argument("No phone number Entered");
         }
         phoneNumber = phone;
+        <<<<<< < chatclass
     }
 
     void updateLastSeen()
@@ -104,8 +105,40 @@ public:
             << "Phone: " << phoneNumber << "\n"
             << "Status: " << status << "\n"
             << "Last Seen: " << lastSeen << "\n";
+        ====== =
+    }
+
+    void updateLastSeen()
+    {
+        time_t current = time(0);
+        lastSeen = ctime(&current);
+        if (!lastSeen.empty() && lastSeen.back() == '\n')
+        {
+            lastSeen.pop_back();
+        }
+    }
+
+    bool checkPassword(string pwd) const
+    {
+        return password == pwd;
+    }
+
+    void changePassword(string newPwd)
+    {
+        password = newPwd;
+    }
+
+    void displayProfile() const
+    {
+        cout << "\nUser Profile:\n"
+            << "Username: " << username << "\n"
+            << "Phone: " << phoneNumber << "\n"
+            << "Status: " << status << "\n"
+            << "Last Seen: " << lastSeen << "\n";
+        >>>>>> > main
     }
 };
+
 
 // ========================
 //      MESSAGE CLASS
