@@ -1,14 +1,17 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <ctime>
-#include<map>
+#include <map>
+
 using namespace std;
 
 // ========================
 //       USER CLASS
 // ========================
-class User {
+class User
+{
 private:
     string username;
     string password;
@@ -17,60 +20,98 @@ private:
     string lastSeen;
 
 public:
-    User() {
-        // TODO: Implement default constructor
+    User()
+    {
+        username = "";
+        password = "";
+        phoneNumber = "";
+        status = "Offline";
+        lastSeen = "Never";
     }
 
-    User(string uname, string pwd, string phone) {
-        // TODO: Implement parameterized constructor
+    User(string uname, string pwd, string phone)
+    {
+        username = uname;
+        password = pwd;
+        phoneNumber = phone;
+        status = "Offline";
+        lastSeen = "Never";
     }
 
-    string getUsername() const {
-        // TODO: Implement getter
-        return "";
+    string getUsername() const
+    {
+        return username;
     }
 
-    string getPhoneNumber() const {
-        // TODO: Implement getter
-        return "";
+    string getPhoneNumber() const
+    {
+        return phoneNumber;
     }
 
-    string getStatus() const {
-        // TODO: Implement getter
-        return "";
+    string getStatus() const
+    {
+        return status;
     }
 
-    string getLastSeen() const {
-        // TODO: Implement getter
-        return "";
+    string getLastSeen() const
+    {
+        return lastSeen;
     }
 
-    void setStatus(string newStatus) {
-        // TODO: Implement setter
+    void setStatus(string newStatus)
+    {
+        if (newStatus != "Online" && newStatus != "Offline" &&
+            newStatus != "Busy" && newStatus != "Away")
+        {
+            throw invalid_argument("Invalid status value");
+        }
+        status = newStatus;
     }
 
-    void setPhoneNumber(string phone) {
-        // TODO: Implement setter
+    void setPhoneNumber(string phone)
+    {
+        if (phone.empty())
+        {
+            throw invalid_argument("No phone number Entered");
+        }
+        phoneNumber = phone;
     }
 
-    void updateLastSeen() {
-        // TODO: Implement last seen update
+    void updateLastSeen()
+    {
+        time_t current = time(0);
+        lastSeen = ctime(&current);
+        if (!lastSeen.empty() && lastSeen.back() == '\n')
+        {
+            lastSeen.pop_back();
+        }
     }
 
-    bool checkPassword(string pwd) const {
-        // TODO: Implement password check
-        return false;
+    bool checkPassword(string pwd) const
+    {
+        return password == pwd;
     }
 
-    void changePassword(string newPwd) {
-        // TODO: Implement password change
+    void changePassword(string newPwd)
+    {
+        password = newPwd;
+    }
+
+    void displayProfile() const
+    {
+        cout << "\nUser Profile:\n"
+            << "Username: " << username << "\n"
+            << "Phone: " << phoneNumber << "\n"
+            << "Status: " << status << "\n"
+            << "Last Seen: " << lastSeen << "\n";
     }
 };
 
 // ========================
 //      MESSAGE CLASS
 // ========================
-class Message {
+class Message
+{
 private:
     string sender;
     string content;
@@ -78,7 +119,8 @@ private:
     string status;
     Message* replyTo;
 
-    string getcurrentTime() {
+    string getcurrentTime()
+    {
         time_t current = time(0);
         string cur_Time = ctime(&current);
 
@@ -86,7 +128,8 @@ private:
     }
 
 public:
-    Message() {
+    Message()
+    {
         sender = "";
         content = "";
         timestamp = getcurrentTime();
@@ -94,36 +137,42 @@ public:
         replyTo = nullptr;
     }
 
-    Message(string sndr, string cntnt) {
+    Message(string sndr, string cntnt)
+    {
         sender = sndr;
         content = cntnt;
+        timestamp = "";
+        status = "Sent";
+        replyTo = nullptr;
     }
 
-    string getContent() const {
-
+    string getContent() const
+    {
         return content;
     }
 
-    string getSender() const {
+    string getSender() const
+    {
         return sender;
     }
 
-    string getTimestamp() const {
-
+    string getTimestamp() const
+    {
         return timestamp;
     }
 
-    string getStatus() const {
-
+    string getStatus() const
+    {
         return status;
     }
 
-    Message* getReplyTo() const {
-
+    Message* getReplyTo() const
+    {
         return replyTo;
     }
 
-    void setStatus(string newStatus) {
+    void setStatus(string newStatus)
+    {
         if (status == "Sent" && (newStatus == "Delivered" || newStatus == "Read"))
         {
             status = newStatus;
@@ -132,246 +181,470 @@ public:
         {
             status = newStatus;
         }
-        else {
-
+        else
+        {
         }
-
     }
 
-    void setReplyTo(Message* msg) {
-        if (msg != this && msg != nullptr) {
+    void setReplyTo(Message* msg)
+    {
+        if (msg != this && msg != nullptr)
+        {
             // we will check about this condition.
             replyTo = msg;
         }
     }
 
-    void updateTimestamp() {
+    void updateTimestamp()
+    {
         timestamp = getcurrentTime();
     }
 
-    void display() const {
+    void display() const
+    {
         cout << "Sender : " << sender << endl;
         cout << " Time : " << timestamp << endl;
         cout << " Status :" << status << endl;
-        if (replyTo != nullptr) {
+        if (replyTo != nullptr)
+        {
             cout << " Replying to :" << replyTo->getSender() << endl;
             cout << replyTo->getContent();
             cout << endl;
         }
 
         cout << " Content : " << content << endl;
-
     }
 
-    void addEmoji(string emojiCode) {
+    string toString() const
+    {
+        string s = "[" + timestamp + "] " + sender + " (" + status + "): " + content;
+        if (replyTo != nullptr)
+        {
+            s += " (reply to " + replyTo->getSender() + ": \"" + replyTo->getContent() + "\")";
+        }
+        return s;
+    }
 
+    void addEmoji(string emojiCode)
+    {
         static map<string, string> EMOJIS = {
-        {":joy:" , u8"\U0001F602"},
-         {":open_mouth:" , u8"\U0001F62E"},
-         {":cry:" , u8"\U0001F622"},
-         {":thumbsup:" , u8"\U0001F44D"},
-          {":facepunch:" , u8"\U0001F44A"},
-           {":green_heart:" , u8"\U0001F49A"},
-           {":wave:" , u8"\U0001F44B"},
-           {":thumbsdown:" , u8"\U0001F44E"},
-           {":worried:" , u8"\U0001F61F"},
-           {":world_map:" , u8"\U0001F5FA"},
+            {":joy:", u8"\U0001F602"},
+            {":open_mouth:", u8"\U0001F62E"},
+            {":cry:", u8"\U0001F622"},
+            {":thumbsup:", u8"\U0001F44D"},
+            {":facepunch:", u8"\U0001F44A"},
+            {":green_heart:", u8"\U0001F49A"},
+            {":wave:", u8"\U0001F44B"},
+            {":thumbsdown:", u8"\U0001F44E"},
+            {":worried:", u8"\U0001F61F"},
+            {":world_map:", u8"\U0001F5FA"},
 
         };
         auto emoji = EMOJIS.find(emojiCode);
-        if (emoji != EMOJIS.end()) {
+        if (emoji != EMOJIS.end())
+        {
             content = content + " " + emoji->second;
         }
-        else {
+        else
+        {
             cout << "Unknown emoji code " << endl;
         }
     }
 };
 
 // ========================
-//       CHAT CLASS (BASE)
+//    CHAT CLASS (BASE)
 // ========================
-class Chat {
+class Chat
+{
 protected:
     vector<string> participants;
     vector<Message> messages;
     string chatName;
 
 public:
-
     Chat() : chatName("Untitled"), participants(), messages() {}
 
     Chat(vector<string> users, string name)
         : participants(users), chatName(name), messages() {
     }
 
-    void addMessage(const Message& msg) {
+    void addMessage(const Message& msg)
+    {
         messages.push_back(msg);
     }
 
-    bool deleteMessage(int index, const string& username) {
-        if (index >= 0 && index < messages.size()) {
-            if (messages[index].getSender() == username) {
+    bool deleteMessage(int index, const string& username)
+    {
+        if (index >= 0 && index < messages.size())
+        {
+            if (messages[index].getSender() == username)
+            {
                 messages.erase(messages.begin() + index);
                 return true;
-
             }
         }
         return false;
     }
 
-    virtual void displayChat() const {
-        virtual void displayChat() const {
-            cout << "Chat: " << chatName << endl;
-            for (const auto& msg : messages) {
-                msg.display();
-            }
+    virtual void displayChat() const
+    {
+        cout << "Chat: " << chatName << endl;
+        for (const auto& msg : messages)
+        {
+            msg.display();
         }
     }
 
-    vector<Message> searchMessages(string keyword) const {
-        vector<Message> searchMessages(string keyword) const {
-            vector<Message> results;
-            for (const auto& msg : messages) {
-                if (msg.getContent().find(keyword) != string::npos) {
-                    results.push_back(msg);
-                }
+    vector<Message> searchMessages(string keyword) const
+    {
+        vector<Message> results;
+        for (const auto& msg : messages)
+        {
+            if (msg.getContent().find(keyword) != string::npos)
+            {
+                results.push_back(msg);
+                return results;
             }
-            return results;
         }
+
         return {};
     }
 
-    void exportToFile(const string& filename) const {
-        void exportToFile(const string & filename) const {
-            ofstream file(filename);
-            if (file.is_open()) {
-                file << "Chat: " << chatName << "\n";
-                for (const auto& msg : messages) {
-                    file << msg.toString() << "\n";
-                }
-                file.close();
-                cout << "Chat exported to " << filename << endl;
+    void exportToFile(const string& filename) const
+    {
+        ofstream file(filename);
+        if (file.is_open())
+        {
+            file << "Chat: " << chatName << "\n";
+            for (const auto& msg : messages)
+            {
+                file << msg.toString() << "\n";
             }
-            else {
-                cerr << "Failed to open file for writing: " << filename << endl;
-            }
+            file.close();
+            cout << "Chat exported to " << filename << endl;
+        }
+        else
+        {
+            cerr << "Failed to open file for writing: " << filename << endl;
         }
     };
-}
 };
 
 // ========================
-//     PRIVATE CHAT CLASS
+//    PRIVATE CHAT CLASS
 // ========================
-class PrivateChat : public Chat {
+class PrivateChat : public Chat
+{
 private:
     string user1;
     string user2;
 
 public:
-    PrivateChat(string u1, string u2) {
-        // TODO: Implement constructor
+    PrivateChat(string u1, string u2)
+    {
+        user1 = u1;
+        user2 = u2;
+        participants.push_back(u1);
+        participants.push_back(u2);
+        chatName = u1 + "and" + u2;
     }
 
-    void displayChat() const override {
-        // TODO: Implement private chat display
+    void displayChat() const override
+    {
+        cout << "private chat Started Between:" << user1 << "and" << user2 << "..." << endl;
+        if (messages.empty())
+        {
+            cout << "Chat is empty" << endl;
+        }
+        else
+        {
+            for (const auto& msg : messages)
+            {
+                msg.display();
+                cout << "--------------------" << endl;
+            }
+        }
+        cout << "***************************" << endl;
     }
 
-    void showTypingIndicator(const string& username) const {
-        // TODO: Implement typing indicator
+    void showTypingIndicator(const string& username) const
+    {
+        if (username == user1 || username == user2)
+        {
+            cout << username << " is typing..." << endl;
+        }
+        else
+        {
+            cout << "Error: " << username << " is not part of this private chat." << endl;
+        }
     }
 };
 
 // ========================
-//      GROUP CHAT CLASS
+//    GROUP CHAT CLASS
 // ========================
-class GroupChat : public Chat {
+class GroupChat : public Chat
+{
 private:
     vector<string> admins;
+    vector<string> joinRequests;
     string description;
 
 public:
-    GroupChat(vector<string> users, string name, string creator) {
-        // TODO: Implement constructor
+    GroupChat(vector<string> users, string name, string creator)
+    {
+        admins.push_back(creator);
+        users.push_back(creator);
+        participants = users;
+        chatName = name;
+        description = "Welcome to the group chat!";
     }
 
-    void addAdmin(string newAdmin) {
-        // TODO: Implement add admin
+    void addAdmin(string newAdmin)
+    {
+        if (isAdmin(newAdmin))
+        {
+            cout << newAdmin << " is already an admin." << endl;
+        }
+        else
+        {
+            if (isParticipant(newAdmin))
+            {
+                admins.push_back(newAdmin);
+                cout << newAdmin << " is now an admin." << endl;
+            }
+            else
+            {
+                cout << "User not found." << endl;
+            }
+        }
     }
 
-    bool removeParticipant(const string& admin, const string& userToRemove) {
-        // TODO: Implement remove participant
+    bool removeParticipant(const string& admin, const string& userToRemove)
+    {
+        if (!isAdmin(admin))
+        {
+            return false;
+        }
+        else
+        {
+            for (int i = 0; i < participants.size(); i++)
+            {
+                if (participants[i] == userToRemove)
+                {
+                    participants.erase(participants.begin() + i);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    bool isAdmin(string username) const
+    {
+        for (int i = 0; i < admins.size(); i++)
+        {
+            if (admins[i] == username)
+            {
+                return true;
+            }
+        }
         return false;
     }
 
-    bool isAdmin(string username) const {
-        // TODO: Implement admin check
+    bool isParticipant(string username) const
+    {
+        for (int i = 0; i < participants.size(); i++)
+        {
+            if (participants[i] == username)
+            {
+                return true;
+            }
+        }
         return false;
     }
 
-    bool isParticipant(string username) const {
-        // TODO: Implement participant check
-        return false;
+    void setDescription(string desc)
+    {
+        description = desc;
     }
 
-    void setDescription(string desc) {
-        // TODO: Implement set description
+    void displayChat() const override
+    {
+        cout << "\n===== Group Name: " << chatName << " =====\n";
+        cout << "Description: " << description << endl;
+
+        cout << "Admins: ";
+        for (int i = 0; i < admins.size(); i++)
+        {
+            cout << admins[i];
+            if (i < admins.size() - 1)
+            {
+                cout << ", ";
+            }
+        }
+        cout << endl;
+
+        cout << "\n--- Message History ---\n";
+        if (messages.empty())
+        {
+            cout << "No messages yet." << endl;
+        }
+        else
+        {
+            for (int i = 0; i < messages.size(); i++)
+            {
+                messages[i].display();
+            }
+        }
+        cout << "========================\n";
     }
 
-    void displayChat() const override {
-        // TODO: Implement group chat display
+    void sendJoinRequest(const string& username)
+    {
+        if (isParticipant(username))
+        {
+            cout << username << " is already a participant." << endl;
+        }
+        else
+        {
+            cout << username << " has requested to join " << chatName << endl;
+            joinRequests.push_back(username);
+        }
     }
 
-    void sendJoinRequest(const string& username) {
-        // TODO: Implement join request
+    void viewJoinRequests(const string& admin)
+    {
+        if (!isAdmin(admin))
+        {
+            cout << "Only admins can view join requests." << endl;
+            return;
+        }
+
+        if (joinRequests.empty())
+        {
+            cout << "No join requests." << endl;
+            return;
+        }
+
+        short int choice = 0;
+        int i = 0;
+
+        while (i < joinRequests.size())
+        {
+            cout << joinRequests[i] << " has sent a join request." << endl;
+            cout << "1. Approve\n2. Decline\n3. Ignore\nChoice: ";
+            cin >> choice;
+
+            while (choice < 1 || choice > 3)
+            {
+                cout << "\nInvalid choice. Please enter 1, 2, or 3: ";
+                cin >> choice;
+            }
+
+            if (choice == 1)
+            {
+                cout << "Request from " << joinRequests[i] << " is approved." << endl;
+                participants.push_back(joinRequests[i]);
+                joinRequests.erase(joinRequests.begin() + i);
+            }
+            else if (choice == 2)
+            {
+                cout << "Request from " << joinRequests[i] << " is declined." << endl;
+                joinRequests.erase(joinRequests.begin() + i);
+            }
+            else if (choice == 3)
+            {
+                cout << "Ignoring request from " << joinRequests[i] << endl;
+                i++;
+            }
+        }
     }
 };
 
 // ========================
 //    WHATSAPP APP CLASS
 // ========================
-class WhatsApp {
+class WhatsApp
+{
 private:
     vector<User> users;
     vector<Chat*> chats;
     int currentUserIndex;
 
-    int findUserIndex(string username) const {
-        for (int i = 0;i < users.size;i++) {
-            if (users[i].getUsername() == username) {
+    int findUserIndex(string username) const
+    {
+        for (int i = 0; i < users.size(); i++)
+        {
+            if (users[i].getUsername() == username)
+            {
                 return i;
             }
         }
         return -1;
     }
 
-    bool isLoggedIn() const {
-
-        return currentUserIndex != -1;;
+    bool isLoggedIn() const
+    {
+        return currentUserIndex != -1;
     }
 
-    string getCurrentUsername() const {
-        if (isloggedIn()) {
+    string getCurrentUsername() const
+    {
+        if (isLoggedIn())
+        {
             return users[currentUserIndex].getUsername();
         }
-        else {
-
+        else
+        {
             return "";
         }
     }
 
-public:
-    WhatsApp() : currentUserIndex(-1) {}
+    void saveUsers_file() const
+    {
+        ofstream file("accounts.txt");
+        if (!file)
+        {
+            cerr << "Unable to save acccount.\n";
+            return;
+        }
+        for (const auto& us : users)
+        {
+            file << us.getUsername() << " "
+                << us.getPhoneNumber() << " "
+                << us.getStatus() << " "
+                << us.getLastSeen() << "\n";
+        }
+    }
+    void loadUsers_file()
+    {
+        ifstream file("accounts.txt");
+        if (!file)
+        {
+            cerr << "Unable to load acccount.\n";
+            return;
+        }
+        string un, ph, st, lt;
+        while (file >> un >> ph >> st >> lt)
+        {
+            users.push_back(User(un, "1234", ph));
+        }
+    }
 
-    void signUp() {
+public:
+    WhatsApp() : currentUserIndex(-1) { loadUsers_file(); }
+
+    void signUp()
+    {
         string username, password, phone;
 
         cout << "Enter username: ";
         cin >> username;
 
-
-        if (findUserIndex(username) != -1) {
+        if (findUserIndex(username) != -1)
+        {
             cout << "Username already taken. Try a different one.\n";
             return;
         }
@@ -383,10 +656,12 @@ public:
         cin >> phone;
 
         users.push_back(User(username, password, phone));
+        saveUsers_file();
         cout << "User registered successfully.\n";
     }
 
-    void login() {
+    void login()
+    {
         string username, password;
         cout << "Enter username: ";
         cin >> username;
@@ -394,24 +669,27 @@ public:
         cin >> password;
 
         int index = findUserIndex(username);
-        if (index != -1 && users[index].checkPassword(password)) {
+        if (index != -1 && users[index].checkPassword(password))
+        {
             currentUserIndex = index;
-            users[currentUserIndex].setstatus("Online");
-            cout << "Login successful. Welcome, " << username << "!\n";
+            users[currentUserIndex].setStatus("Online");
+            cout << "Logged-in successfully. Welcome, " << username << "!\n";
         }
-        else {
+        else
+        {
             cout << "Invalid username or password.\n";
         }
     }
 
-    void startPrivateChat() {
-
+    void startPrivateChat()
+    {
         string otherUser;
         cout << "Enter the username to chat with: ";
         cin >> otherUser;
 
         int otherIndex = findUserIndex(otherUser);
-        if (otherIndex == -1) {
+        if (otherIndex == -1)
+        {
             cout << "User not found.\n";
             return;
         }
@@ -420,53 +698,113 @@ public:
         Chat* chat = new PrivateChat(currentUser, otherUser);
         chats.push_back(chat);
         cout << "Private chat started between " << currentUser << " and " << otherUser << ".\n";
+    }
 
+    void createGroup()
+    {
+        string groupName, creator, username;
+        int groupLimit = 1024, Mychoice;
+        vector<string> groupMembers;
 
-        void createGroup() {
-            // TODO: Implement group creation
+        cout << "Enter group name: ";
+        while (groupName.empty())
+        {
+            cin.ignore();
+            getline(cin, groupName);
         }
 
-        void viewChats() const {
-            if (chats.empty()) {
-                cout << "No chats to display.\n";
-                return;
+        creator = getCurrentUsername();
+        groupMembers.push_back(creator);
+
+        while (groupMembers.size() < groupLimit)
+        {
+            cout << "Enter participant username : ";
+            cin >> username;
+
+            if (username == creator)
+            {
+                cout << "You are already added as the group creator.\n";
+                continue;
             }
 
-            for (size_t i = 0; i < chats.size(); ++i) {
-                cout << "\n--- Chat #" << (i + 1) << " ---\n";
-                chats[i]->displayChat();
+            if (findUserIndex(username) != -1)
+            {
+                groupMembers.push_back(username);
             }
+            else
+            {
+                cout << "User '" << username << "' does not exist.\n";
+                continue;
+            }
+
+            cout << username << " is added successfully.\n";
+            cout << "Add another participant? (1.Yes / 2.No): ";
+            cin >> Mychoice;
+            if (Mychoice != 1)
+            {
+                break;
+            }
+        }
+
+        Chat* group = new GroupChat(groupMembers, groupName, creator);
+        chats.push_back(group);
+        cout << creator << "created " << groupName << " group.\n";
+    }
+
+    void viewChats() const
+    {
+        if (chats.empty())
+        {
+            cout << "No chats to display.\n";
+            return;
+        }
+
+        for (size_t i = 0; i < chats.size(); ++i)
+        {
+            cout << "\n--- Chat #" << (i + 1) << " ---\n";
+            chats[i]->displayChat();
         }
     }
 
-    void logout() {
+    void logout()
+    {
         users[currentUserIndex].updateLastSeen();
         users[currentUserIndex].setStatus("Offline");
         currentUserIndex = -1;
-        cout << "logging out is successful \n";
-
+        cout << "Logged-out successfully.\n";
     }
 
-    void run() {
-        while (true) {
-            if (!isLoggedIn()) {
+    void run()
+    {
+        while (true)
+        {
+            if (!isLoggedIn())
+            {
                 cout << "\n1. Login\n2. Sign Up\n3. Exit\nChoice: ";
                 int choice;
                 cin >> choice;
 
-                if (choice == 1) login();
-                else if (choice == 2) signUp();
-                else if (choice == 3) break;
+                if (choice == 1)
+                    login();
+                else if (choice == 2)
+                    signUp();
+                else if (choice == 3)
+                    break;
             }
-            else {
+            else
+            {
                 cout << "\n1. Start Private Chat\n2. Create Group\n3. View Chats\n4. Logout\nChoice: ";
                 int choice;
                 cin >> choice;
 
-                if (choice == 1) startPrivateChat();
-                else if (choice == 2) createGroup();
-                else if (choice == 3) viewChats();
-                else if (choice == 4) logout();
+                if (choice == 1)
+                    startPrivateChat();
+                else if (choice == 2)
+                    createGroup();
+                else if (choice == 3)
+                    viewChats();
+                else if (choice == 4)
+                    logout();
             }
         }
     }
@@ -475,7 +813,8 @@ public:
 // ========================
 //          MAIN
 // ========================
-int main() {
+int main()
+{
     WhatsApp whatsapp;
     whatsapp.run();
     return 0;
