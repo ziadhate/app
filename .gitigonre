@@ -1,0 +1,4 @@
+*.Textflow.o
+*.Textflow.vcxproj
+*.Textflow.vcxproj.filters
+*.Textflow.vcxproj.user
