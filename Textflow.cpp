@@ -717,31 +717,55 @@ public:
         cout << "Private chat started between " << currentUser << " and " << otherUser << ".\n";
     }
 
-    void createGroup() {
-        string groupName, creator = getCurrentUsername(), username;
+    void createGroup()
+    {
+        string groupName, creator, username;
         int groupLimit = 1024, Mychoice;
-        vector<string> groupMembers = { creator };
+        vector<string> groupMembers;
 
         cout << "Enter group name: ";
-        cin.ignore();
-        getline(cin, groupName);
-
-        while (groupMembers.size() < groupLimit) {
-            cout << "Enter participant username: ";
-            cin >> username;
-            if (username == creator || findUserIndex(username) == -1) {
-                cout << "Invalid user.\n";
-                continue;
-            }
-            groupMembers.push_back(username);
-            cout << username << " added.\n";
-            cout << "Add more? (1.Yes / 2.No): ";
-            cin >> Mychoice;
-            if (Mychoice != 1) break;
+        while (groupName.empty())
+        {
+            cin.ignore();
+            getline(cin, groupName);
         }
 
-        chats.push_back(new GroupChat(groupMembers, groupName, creator));
-        cout << creator << " created group " << groupName << ".\n";
+        creator = getCurrentUsername();
+        groupMembers.push_back(creator);
+
+        while (groupMembers.size() < groupLimit)
+        {
+            cout << "Enter participant username : ";
+            cin >> username;
+
+            if (username == creator)
+            {
+                cout << "You are already added as the group creator.\n";
+                continue;
+            }
+
+            if (findUserIndex(username) != -1)
+            {
+                groupMembers.push_back(username);
+            }
+            else
+            {
+                cout << "User '" << username << "' does not exist.\n";
+                continue;
+            }
+
+            cout << username << " is added successfully.\n";
+            cout << "Add another participant? (1.Yes / 2.No): ";
+            cin >> Mychoice;
+            if (Mychoice != 1)
+            {
+                break;
+            }
+        }
+
+        Chat* group = new GroupChat(groupMembers, groupName, creator);
+        chats.push_back(group);
+        cout << creator << "created " << groupName << " group.\n";
     }
 
     void viewChats() const
