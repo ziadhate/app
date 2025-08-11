@@ -597,7 +597,7 @@ private:
     }
 
 public:
-    WhatsApp() : currentUserIndex(-1) {}
+    WhatsApp() : currentUserIndex(-1) { loadUsers_file(); }
 
     void signUp()
     {
