@@ -22,7 +22,8 @@ private:
 public:
     User()
     {
-        // TODO: Implement default constructor
+
+
         username = "";
         password = "";
         phoneNumber = "";
@@ -32,7 +33,8 @@ public:
 
     User(string uname, string pwd, string phone)
     {
-        // TODO: Implement parameterized constructor
+
+
         username = uname;
         password = pwd;
         phoneNumber = phone;
@@ -42,31 +44,31 @@ public:
 
     string getUsername() const
     {
-        // TODO: Implement getter
+
         return username;
     }
 
     string getPhoneNumber() const
     {
-        // TODO: Implement getter
+
         return phoneNumber;
     }
 
     string getStatus() const
     {
-        // TODO: Implement getter
+
         return status;
     }
 
     string getLastSeen() const
     {
-        // TODO: Implement getter
+
         return lastSeen;
     }
 
     void setStatus(string newStatus)
     {
-        // TODO: Implement setter
+
         if (newStatus != "Online" && newStatus != "Offline" &&
             newStatus != "Busy" && newStatus != "Away")
         {
@@ -77,7 +79,7 @@ public:
 
     void setPhoneNumber(string phone)
     {
-        // TODO: Implement setter
+
         if (phone.empty())
         {
             throw invalid_argument("No phone number Entered");
@@ -97,16 +99,18 @@ public:
 
     bool checkPassword(string pwd) const
     {
-        // TODO: Implement password check
+
+
         return password == pwd;
     }
 
     void changePassword(string newPwd)
     {
-        // TODO: Implement password change
+
 
         password = newPwd;
     }
+
 
     void displayProfile() const
     {
@@ -155,6 +159,10 @@ public:
     {
         sender = sndr;
         content = cntnt;
+        timestamp = "";
+        status = "Sent";
+        replyTo = nullptr;
+
     }
 
     string getContent() const
@@ -195,7 +203,6 @@ public:
         else if (status == "Delivered" && newStatus == "Read")
         {
             status = newStatus;
-
         }
         else
         {
@@ -239,6 +246,7 @@ public:
         if (replyTo != nullptr)
         {
             s += " (reply to " + replyTo->getSender() + ": \"" + replyTo->getContent() + "\")";
+
         }
         return s;
     }
@@ -307,7 +315,7 @@ public:
         }
         return false;
     }
- 
+
     virtual void displayChat() const
     {
         cout << "Chat: " << chatName << endl;
@@ -366,7 +374,7 @@ private:
 public:
     PrivateChat(string u1, string u2)
     {
-        // TODO: Implement constructor
+
         user1 = u1;
         user2 = u2;
         participants.push_back(u1);
@@ -376,7 +384,7 @@ public:
 
     void displayChat() const override
     {
-        // TODO: Implement private chat display
+
         cout << "private chat Started Between:" << user1 << "and" << user2 << "..." << endl;
         if (messages.empty())
         {
@@ -395,7 +403,7 @@ public:
 
     void showTypingIndicator(const string &username) const
     {
-        // TODO: Implement typing indicator
+
         if (username == user1 || username == user2)
         {
             cout << username << " is typing..." << endl;
@@ -549,7 +557,7 @@ private:
 
     int findUserIndex(string username) const
     {
-        // TODO: Implement user search
+
         for (int i = 0; i < users.size(); i++)
             if (users[i].getUsername() == username)
                 return i;
@@ -558,13 +566,12 @@ private:
 
     bool isLoggedIn() const
     {
-        // TODO: Implement login check
+
         return currentUserIndex != -1;
     }
 
     string getCurrentUsername() const
     {
-        // TODO: Implement get current user
         if (isLoggedIn())
         {
             return users[currentUserIndex].getUsername();
@@ -574,6 +581,7 @@ private:
             return "";
         }
     }
+
 
     void saveUsers_file() const
     {
@@ -608,8 +616,7 @@ private:
     }
 
 public:
-    WhatsApp() : currentUserIndex(-1) {}
-
+    WhatsApp() : currentUserIndex(-1) {loadUsers_file();}
 
     void signUp()
     {
@@ -618,10 +625,8 @@ public:
         cout << "Enter username: ";
         cin >> username;
 
-
         if (findUserIndex(username) != -1)
         {
-
             cout << "Username already taken. Try a different one.\n";
             return;
         }
@@ -631,6 +636,7 @@ public:
 
         cout << "Enter phone number: ";
         cin >> phone;
+
 
         users.push_back(User(username, password, phone));
         cout << "User registered successfully.\n";
@@ -678,7 +684,7 @@ public:
     }
     void createGroup() {}
 
-    // TODO: Implement group creation
+
 
     void viewChats() const
     {
@@ -687,6 +693,7 @@ public:
             cout << "No chats to display.\n";
             return;
         }
+
 
         for (size_t i = 0; i < chats.size(); ++i)
         {
