@@ -4,6 +4,7 @@
 #include <ctime>
 #include <map>
 #include <fstream>
+
 using namespace std;
 
 // ========================
@@ -21,6 +22,8 @@ private:
 public:
     User()
     {
+
+
         username = "";
         password = "";
         phoneNumber = "";
@@ -30,6 +33,8 @@ public:
 
     User(string uname, string pwd, string phone)
     {
+
+
         username = uname;
         password = pwd;
         phoneNumber = phone;
@@ -39,26 +44,31 @@ public:
 
     string getUsername() const
     {
+
         return username;
     }
 
     string getPhoneNumber() const
     {
+
         return phoneNumber;
     }
 
     string getStatus() const
     {
+
         return status;
     }
 
     string getLastSeen() const
     {
+
         return lastSeen;
     }
 
     void setStatus(string newStatus)
     {
+
         if (newStatus != "Online" && newStatus != "Offline" &&
             newStatus != "Busy" && newStatus != "Away")
         {
@@ -69,6 +79,7 @@ public:
 
     void setPhoneNumber(string phone)
     {
+
         if (phone.empty())
         {
             throw invalid_argument("No phone number Entered");
@@ -89,6 +100,7 @@ public:
     bool checkPassword(string pwd) const
     {
 
+
         return password == pwd;
     }
 
@@ -98,6 +110,7 @@ public:
 
         password = newPwd;
     }
+
 
     void displayProfile() const
     {
@@ -130,14 +143,17 @@ private:
     }
 
 public:
+
     Message()
     {
+
         sender = "";
         content = "";
         timestamp = getcurrentTime();
         status = "Sent";
         replyTo = nullptr;
     }
+
 
     Message(string sndr, string cntnt)
     {
@@ -146,6 +162,7 @@ public:
         timestamp = "";
         status = "Sent";
         replyTo = nullptr;
+
     }
 
     string getContent() const
@@ -192,6 +209,7 @@ public:
         }
     }
 
+
     void setReplyTo(Message *msg)
     {
         if (msg != this && msg != nullptr)
@@ -200,6 +218,7 @@ public:
             replyTo = msg;
         }
     }
+
 
     void updateTimestamp()
     {
@@ -220,12 +239,14 @@ public:
 
         cout << " Content : " << content << endl;
     }
+
     string toString() const
     {
         string s = "[" + timestamp + "] " + sender + " (" + status + "): " + content;
         if (replyTo != nullptr)
         {
             s += " (reply to " + replyTo->getSender() + ": \"" + replyTo->getContent() + "\")";
+
         }
         return s;
     }
@@ -253,6 +274,7 @@ public:
         }
         else
         {
+
             cout << "Unknown emoji code " << endl;
         }
     }
@@ -352,6 +374,7 @@ private:
 public:
     PrivateChat(string u1, string u2)
     {
+
         user1 = u1;
         user2 = u2;
         participants.push_back(u1);
@@ -361,6 +384,7 @@ public:
 
     void displayChat() const override
     {
+
         cout << "private chat Started Between:" << user1 << "and" << user2 << "..." << endl;
         if (messages.empty())
         {
@@ -379,6 +403,7 @@ public:
 
     void showTypingIndicator(const string &username) const
     {
+
         if (username == user1 || username == user2)
         {
             cout << username << " is typing..." << endl;
@@ -529,8 +554,10 @@ private:
     vector<Chat *> chats;
     int currentUserIndex;
 
+
     int findUserIndex(string username) const
     {
+
         for (int i = 0; i < users.size(); i++)
             if (users[i].getUsername() == username)
                 return i;
@@ -539,6 +566,7 @@ private:
 
     bool isLoggedIn() const
     {
+
         return currentUserIndex != -1;
     }
 
@@ -553,6 +581,7 @@ private:
             return "";
         }
     }
+
 
     void saveUsers_file() const
     {
@@ -582,6 +611,7 @@ private:
         while (file >> un >> ph >> st >> lt)
         {
             users.push_back(User(un, "1234", ph));
+
         }
     }
 
@@ -606,6 +636,7 @@ public:
 
         cout << "Enter phone number: ";
         cin >> phone;
+
 
         users.push_back(User(username, password, phone));
         cout << "User registered successfully.\n";
@@ -654,6 +685,7 @@ public:
     void createGroup() {}
 
 
+
     void viewChats() const
     {
         if (chats.empty())
@@ -661,6 +693,7 @@ public:
             cout << "No chats to display.\n";
             return;
         }
+
 
         for (size_t i = 0; i < chats.size(); ++i)
         {
@@ -671,10 +704,12 @@ public:
 
     void logout()
     {
+
         users[currentUserIndex].updateLastSeen();
         users[currentUserIndex].setStatus("Offline");
         currentUserIndex = -1;
         cout << "logging out is successful \n";
+
     }
 
     void run()
