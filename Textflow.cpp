@@ -4,6 +4,7 @@
 #include <ctime>
 #include <map>
 #include <fstream>
+
 using namespace std;
 
 // ========================
@@ -138,14 +139,17 @@ private:
     }
 
 public:
+
     Message()
     {
+
         sender = "";
         content = "";
         timestamp = getcurrentTime();
         status = "Sent";
         replyTo = nullptr;
     }
+
 
     Message(string sndr, string cntnt)
     {
@@ -191,11 +195,13 @@ public:
         else if (status == "Delivered" && newStatus == "Read")
         {
             status = newStatus;
+
         }
         else
         {
         }
     }
+
 
     void setReplyTo(Message *msg)
     {
@@ -205,6 +211,7 @@ public:
             replyTo = msg;
         }
     }
+
 
     void updateTimestamp()
     {
@@ -225,6 +232,7 @@ public:
 
         cout << " Content : " << content << endl;
     }
+
     string toString() const
     {
         string s = "[" + timestamp + "] " + sender + " (" + status + "): " + content;
@@ -258,6 +266,7 @@ public:
         }
         else
         {
+
             cout << "Unknown emoji code " << endl;
         }
     }
@@ -298,7 +307,7 @@ public:
         }
         return false;
     }
-
+ 
     virtual void displayChat() const
     {
         cout << "Chat: " << chatName << endl;
@@ -537,6 +546,7 @@ private:
     vector<Chat *> chats;
     int currentUserIndex;
 
+
     int findUserIndex(string username) const
     {
         // TODO: Implement user search
@@ -593,11 +603,13 @@ private:
         while (file >> un >> ph >> st >> lt)
         {
             users.push_back(User(un, "1234", ph));
+
         }
     }
 
 public:
     WhatsApp() : currentUserIndex(-1) { loadUsers_file(); }
+
 
     void signUp()
     {
@@ -606,8 +618,10 @@ public:
         cout << "Enter username: ";
         cin >> username;
 
+
         if (findUserIndex(username) != -1)
         {
+
             cout << "Username already taken. Try a different one.\n";
             return;
         }
@@ -683,10 +697,12 @@ public:
 
     void logout()
     {
+
         users[currentUserIndex].updateLastSeen();
         users[currentUserIndex].setStatus("Offline");
         currentUserIndex = -1;
         cout << "logging out is successful \n";
+
     }
 
     void run()
