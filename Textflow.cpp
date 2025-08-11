@@ -639,6 +639,7 @@ public:
 
 
         users.push_back(User(username, password, phone));
+        saveUsers_file();
         cout << "User registered successfully.\n";
     }
 
