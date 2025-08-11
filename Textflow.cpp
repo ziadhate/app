@@ -26,7 +26,7 @@ public:
         password = "";
         phoneNumber = "";
         status = "Offline";
-        lastSeen = "Never";
+
     }
 
     User(string uname, string pwd, string phone)
@@ -34,13 +34,19 @@ public:
         username = uname;
         password = pwd;
         phoneNumber = phone;
-        status = "Offline";
+        status = "Online";
         lastSeen = "Never";
     }
 
     string getUsername() const
     {
         return username;
+    }
+
+    string getPassword() const {
+
+    return password;
+
     }
 
     string getPhoneNumber() const
@@ -80,11 +86,14 @@ public:
     void updateLastSeen()
     {
         time_t current = time(0);
-        lastSeen = ctime(&current);
+
+        string cur_time = ctime(&current);
+
         if (!lastSeen.empty() && lastSeen.back() == '\n')
         {
             lastSeen.pop_back();
         }
+        lastSeen = cur_time;
     }
 
     bool checkPassword(string pwd) const
@@ -141,7 +150,7 @@ public:
     {
         sender = sndr;
         content = cntnt;
-        timestamp = "";
+        timestamp = getcurrentTime();
         status = "Sent";
         replyTo = nullptr;
     }
@@ -351,7 +360,9 @@ public:
 
     void displayChat() const override
     {
-        cout << "private chat Started Between:" << user1 << "and" << user2 << "..." << endl;
+
+        cout << "private chat Started Between: " << user1 << " " << " and " << " " << user2 << " ..." << endl;
+
         if (messages.empty())
         {
             cout << "Chat is empty" << endl;
@@ -613,6 +624,7 @@ private:
         {
             file << us.getUsername() << " "
                  << us.getPhoneNumber() << " "
+                 << us.getPassword() << " "
                  << us.getStatus() << " "
                  << us.getLastSeen() << "\n";
         }
@@ -625,10 +637,13 @@ private:
             cerr << "Unable to load acccount.\n";
             return;
         }
-        string un, ph, st, lt;
-        while (file >> un >> ph >> st >> lt)
+        string un, ph, pw, st, lt ;
+        while (file >> un >> ph >> pw >> st)
         {
-            users.push_back(User(un, "1234", ph));
+
+            users.push_back(User(un, pw , ph));
+
+
         }
     }
 
@@ -672,7 +687,9 @@ public:
         {
             currentUserIndex = index;
             users[currentUserIndex].setStatus("Online");
-            cout << "Logged-in successfully. Welcome, " << username << "!\n";
+            saveUsers_file();
+            cout << "Login successful. Welcome, " << username << "!\n";
+
         }
         else
         {
@@ -723,6 +740,7 @@ public:
     {
         users[currentUserIndex].updateLastSeen();
         users[currentUserIndex].setStatus("Offline");
+        saveUsers_file();
         currentUserIndex = -1;
         cout << "Logged-out successfully.\n";
     }
